@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>창원시 전기차 충전소 추천 MVP (팔용동·중앙동·석동)</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --border: #e5e7eb;
+      --ok-bg: #ecfdf5;
+      --ok-text: #065f46;
+      --warn-bg: #fffbeb;
+      --warn-text: #92400e;
+      --bad-bg: #fef2f2;
+      --bad-text: #991b1b;
+      --sim-bg: #eef2ff;
+      --sim-text: #3730a3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: #111827;
+      color: #fff;
+      padding: 20px 24px;
+    }
+    header h1 { margin: 0 0 6px; font-size: 1.35rem; }
+    header p { margin: 0; color: #d1d5db; font-size: 0.9rem; }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px 40px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1.05rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      margin-top: 6px;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .badge-sim { background: var(--sim-bg); color: var(--sim-text); }
+    .badge-ok { background: var(--ok-bg); color: var(--ok-text); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn-text); }
+    .badge-bad { background: var(--bad-bg); color: var(--bad-text); }
+    .rec-card {
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 16px;
+      background: #eff6ff;
+      margin-bottom: 16px;
+    }
+    .alert-card {
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 16px;
+      background: #fffbeb;
+      margin-bottom: 16px;
+    }
+    .error-card {
+      border: 2px solid #dc2626;
+      border-radius: 12px;
+      padding: 16px;
+      background: #fef2f2;
+      margin-bottom: 16px;
+    }
+    .alt-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      background: #fafafa;
+      margin-bottom: 12px;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .metric .k { font-size: 0.75rem; color: var(--muted); }
+    .metric .v { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .toolbar select {
+      padding: 6px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      background: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    th { background: #f9fafb; font-weight: 600; }
+    .note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>창원시 전기차 충전소 추천 MVP</h1>
+    <p>대상 거점: 의창구 팔용동 · 성산구 중앙동 · 진해구 석동 | <span class="badge badge-sim">시뮬레이션/계산 포함</span> 실제 API 연동 옵션 지원</p>
+  </header>
+
+  <div class="container">
+    <section class="panel">
+      <h2>1. 사용자 및 충전 조건 입력</h2>
+
+      <div class="field">
+        <label for="region">현재 위치 / 이용 거점</label>
+        <select id="region">
+          <option value="팔용동">의창구 팔용동</option>
+          <option value="중앙동">성산구 중앙동</option>
+          <option value="석동">진해구 석동</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="destination">기존 이동 경로 / 목적지</label>
+        <input id="destination" type="text" value="창원 거점 내 업무·생활 이동" />
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="currentSoc">현재 SOC (%)</label>
+          <input id="currentSoc" type="number" min="0" max="100" value="30" />
+        </div>
+        <div class="field">
+          <label for="targetSoc">목표 SOC (%)</label>
+          <input id="targetSoc" type="number" min="1" max="100" value="80" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="batteryKwh">배터리 용량 (kWh)</label>
+          <input id="batteryKwh" type="number" min="10" max="200" step="1" value="60" />
+        </div>
+        <div class="field">
+          <label for="maxVehicleKw">차량 최대 수용 출력 (kW)</label>
+          <input id="maxVehicleKw" type="number" min="3" max="350" step="1" value="100" />
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="dwellMin">예상 체류 시간 (분)</label>
+          <input id="dwellMin" type="number" min="0" max="600" value="45" />
+        </div>
+        <div class="field">
+          <label for="hourSlot">이용 예정 시간대 (시)</label>
+          <select id="hourSlot">
+            <option value="1">01시 (새벽 수요 집중 00~03시)</option>
+            <option value="7">07시 (새벽·아침 전환 03~10시)</option>
+            <option value="12" selected>12시 (낮 시간대 10~15시)</option>
+            <option value="16">16시 (오후 수요 증가 15~18시)</option>
+            <option value="20">20시 (저녁 수요 집중 18~23시)</option>
+            <option value="23">23시 (심야 전환 23~24시)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="season">계절 시나리오</label>
+        <select id="season">
+          <option value="spring_fall" selected>봄·가을 (기본 시나리오)</option>
+          <option value="summer">여름 (냉방·배터리 온도 관리 가정)</option>
+          <option value="winter">겨울 (저온·난방 수요 +15%p 상향 가정)</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" id="runBtn">최적 충전소 추천 계산</button>
+
+      <hr style="margin: 18px 0; border: none; border-top: 1px solid var(--border);" />
+      <h2>2. 공공데이터포털 API 연동 (선택)</h2>
+      <div class="field">
+        <label for="apiKey">한국환경공단 충전소 API ServiceKey</label>
+        <input id="apiKey" type="password" placeholder="미입력 시 내장 샘플 데이터로 동작" />
+      </div>
+      <button class="btn btn-secondary" id="loadApiBtn">API 데이터 불러오기 시도</button>
+      <p id="apiStatus" class="note">현재 내장 샘플 데이터(팔용동·중앙동·석동)를 사용 중입니다.</p>
+    </section>
+
+    <main>
+      <section class="panel" style="margin-bottom: 18px;">
+        <h2>추천 결과 및 총 소요 시간 분석</h2>
+        <div id="recommendationArea"></div>
+      </section>
+
+      <section class="panel">
+        <h2>거점별 충전소 현황 및 시뮬레이션 비교</h2>
+        <div class="toolbar">
+          <select id="filterRegion">
+            <option value="ALL">전체 거점</option>
+            <option value="팔용동">팔용동</option>
+            <option value="중앙동">중앙동</option>
+            <option value="석동">석동</option>
+          </select>
+          <select id="filterType">
+            <option value="ALL">전체 충전기 종류</option>
+            <option value="급속">급속 (50kW 이상)</option>
+            <option value="완속">완속 (7kW)</option>
+          </select>
+          <select id="filterAvail">
+            <option value="ALL">전체 상태</option>
+            <option value="AVAILABLE_ONLY">정상 이용 가능만</option>
+          </select>
+          <select id="sortBy">
+            <option value="totalTime">정렬: 총 소요 시간 짧은 순</option>
+            <option value="occRate">정렬: 예상 가동률 낮은 순</option>
+            <option value="waitTime">정렬: 예상 대기 시간 짧은 순</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>충전소명(거점)</th>
+                <th>종류/출력</th>
+                <th>상태(실제/가정)</th>
+                <th>예상 가동률</th>
+                <th>추가 이동</th>
+                <th>예상 대기</th>
+                <th>예상 충전</th>
+                <th>총 소요</th>
+                <th>체류 내 목표</th>
+              </tr>
+            </thead>
+            <tbody id="stationTableBody"></tbody>
+          </table>
+        </div>
+        <p class="note">
+          ※ 안내: 가동률 60% 미만 및 추가 이동 5분 이내는 초기 추천 기준 가정값입니다.
+          계절 상향(+15%p) 및 시간대별 가동률(00~03시, 10~15시, 18~23시 등)은 알고리즘 검증용 시뮬레이션 값이며 실제 측정치가 아닙니다.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/recommender.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
