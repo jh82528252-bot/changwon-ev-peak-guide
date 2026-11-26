@@ -79,6 +79,42 @@ function renderRecommendationPanel(recArea, input, result) {
   `;
 }
 
+function renderDistributionPanel(distArea, simData) {
+  if (!simData) {
+    distArea.innerHTML = "";
+    return;
+  }
+  distArea.innerHTML = `
+    <div class="alt-card" style="background:#eef2ff;border-color:#c7d2fe;margin-top:12px;">
+      <span class="badge badge-sim">수요 분산 시뮬레이션</span>
+      <strong>피크 시간대 거점별 예상 가동률 및 추정 전력 변화(가정)</strong>
+      <p style="margin:6px 0 8px;font-size:0.83rem;color:#3730a3;">${simData.summary}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>거점</th>
+            <th>분산 전 가동률</th>
+            <th>분산 후 가동률</th>
+            <th>분산 전 추정 전력</th>
+            <th>분산 후 추정 전력</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${simData.rows.map(r => `
+            <tr>
+              <td><strong>${r.region}</strong></td>
+              <td>${r.occBefore}%</td>
+              <td><strong>${r.occAfter}%</strong></td>
+              <td>${r.estKwBefore} kW</td>
+              <td>${r.estKwAfter} kW</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function renderStationTable(tbody, evaluated, filters) {
   let rows = [...evaluated];
 
