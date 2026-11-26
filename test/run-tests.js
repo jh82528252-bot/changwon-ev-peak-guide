@@ -5,7 +5,7 @@ const {
   calcNeededEnergyKwh,
   calcChargingMinutes
 } = require("../js/calculator.js");
-const { buildRecommendation } = require("../js/recommender.js");
+const { buildRecommendation, simulatePeakDistribution } = require("../js/recommender.js");
 
 // 1. 필요 충전 에너지 및 충전 시간 테스트
 assert.strictEqual(calcNeededEnergyKwh(30, 80, 60), 30);
@@ -48,7 +48,7 @@ const noAvailRec = buildRecommendation(allDown, {
 });
 assert.strictEqual(noAvailRec.status, "NO_AVAILABLE_STATION");
 
-// 4. 정상 추천 및 대체 충전소 반환 테스트
+// 4. 정상 추천, 대체 충전소, 수요 분산 시뮬레이션 테스트
 const okRec = buildRecommendation(INITIAL_STATIONS, {
   region: "팔용동",
   currentSoc: 30,
@@ -62,5 +62,9 @@ const okRec = buildRecommendation(INITIAL_STATIONS, {
 assert.strictEqual(okRec.status, "OK");
 assert.ok(okRec.recommended !== null);
 assert.ok(okRec.alternatives.length >= 1);
+
+const distSim = simulatePeakDistribution();
+assert.strictEqual(distSim.targetPeakRate, 65);
+assert.strictEqual(distSim.rows.length, 3);
 
 console.log("ALL TESTS PASSED");
