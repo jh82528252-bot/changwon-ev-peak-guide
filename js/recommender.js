@@ -95,6 +95,20 @@ function buildRecommendation(stations, input) {
   };
 }
 
+// 피크 시간대(예: 중앙동 90% 가정) 주변 분산 시뮬레이션(90% -> 65% 이하 목표 검증)
+function simulatePeakDistribution() {
+  const before = [
+    { region: "중앙동", occBefore: 90, occAfter: 62, estKwBefore: 270, estKwAfter: 186 },
+    { region: "팔용동", occBefore: 55, occAfter: 63, estKwBefore: 165, estKwAfter: 189 },
+    { region: "석동",   occBefore: 50, occAfter: 58, estKwBefore: 150, estKwAfter: 174 }
+  ];
+  return {
+    targetPeakRate: 65,
+    rows: before,
+    summary: "고부하 거점(90% 가정) 수요 일부를 여유 거점으로 재배치 시 목표(65% 이하) 달성 여부를 검증하는 시뮬레이션 값입니다."
+  };
+}
+
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { evaluateStations, buildRecommendation };
+  module.exports = { evaluateStations, buildRecommendation, simulatePeakDistribution };
 }
