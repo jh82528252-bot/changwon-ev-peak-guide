@@ -1,4 +1,5 @@
 let currentStations = JSON.parse(JSON.stringify(INITIAL_STATIONS));
+let latestDistributionSim = null;
 
 function readUserInput() {
   return {
@@ -26,8 +27,11 @@ function readFilters() {
 function updateDashboard() {
   const input = readUserInput();
   const recArea = document.getElementById("recommendationArea");
+  const distArea = document.getElementById("distributionArea");
   const tbody = document.getElementById("stationTableBody");
   const validation = validateUserInput(input);
+
+  renderDistributionPanel(distArea, latestDistributionSim);
 
   if (!validation.valid) {
     renderRecommendationPanel(recArea, input, {
@@ -47,6 +51,11 @@ function updateDashboard() {
   const result = buildRecommendation(currentStations, input);
   renderRecommendationPanel(recArea, input, result);
   renderStationTable(tbody, result.evaluated, readFilters());
+}
+
+function handleDistributionSimulation() {
+  latestDistributionSim = simulatePeakDistribution();
+  updateDashboard();
 }
 
 async function tryLoadApi() {
@@ -77,6 +86,7 @@ async function tryLoadApi() {
 }
 
 document.getElementById("runBtn").addEventListener("click", updateDashboard);
+document.getElementById("simDistBtn").addEventListener("click", handleDistributionSimulation);
 document.getElementById("loadApiBtn").addEventListener("click", tryLoadApi);
 ["filterRegion", "filterType", "filterAvail", "sortBy"].forEach(id => {
   document.getElementById(id).addEventListener("change", updateDashboard);
