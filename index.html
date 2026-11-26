@@ -38,14 +38,14 @@
     header h1 { margin: 0 0 6px; font-size: 1.35rem; }
     header p { margin: 0; color: #d1d5db; font-size: 0.9rem; }
     .container {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 20px auto;
       padding: 0 16px 40px;
       display: grid;
       grid-template-columns: 360px 1fr;
       gap: 20px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .container { grid-template-columns: 1fr; }
     }
     .panel {
@@ -86,7 +86,7 @@
       padding: 10px 14px;
       border: none;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       cursor: pointer;
     }
@@ -99,6 +99,13 @@
     .btn-secondary {
       background: #e5e7eb;
       color: #111827;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+    .btn-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
       margin-top: 8px;
       font-size: 0.85rem;
     }
@@ -138,13 +145,13 @@
     .alt-card {
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
+      padding: 12px 14px;
       background: #fafafa;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .metrics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
       gap: 10px;
       margin: 12px 0;
     }
@@ -263,6 +270,7 @@
       </div>
 
       <button class="btn btn-primary" id="runBtn">최적 충전소 추천 계산</button>
+      <button class="btn btn-outline" id="simDistBtn">피크 시간대 수요 분산 시뮬레이션(90% → 65% 이하)</button>
 
       <hr style="margin: 18px 0; border: none; border-top: 1px solid var(--border);" />
       <h2>2. 공공데이터포털 API 연동 (선택)</h2>
@@ -278,6 +286,7 @@
       <section class="panel" style="margin-bottom: 18px;">
         <h2>추천 결과 및 총 소요 시간 분석</h2>
         <div id="recommendationArea"></div>
+        <div id="distributionArea"></div>
       </section>
 
       <section class="panel">
@@ -324,7 +333,7 @@
         </div>
         <p class="note">
           ※ 안내: 가동률 60% 미만 및 추가 이동 5분 이내는 초기 추천 기준 가정값입니다.
-          계절 상향(+15%p) 및 시간대별 가동률(00~03시, 10~15시, 18~23시 등)은 알고리즘 검증용 시뮬레이션 값이며 실제 측정치가 아닙니다.
+          계절 상향(+15%p), 시간대별 가동률(00~03시, 10~15시, 18~23시 등), 수요 분산 시뮬레이션(90% → 65% 이하 목표)은 알고리즘 검증용 가정값이며 실제 측정치가 아닙니다.
         </p>
       </section>
     </main>
